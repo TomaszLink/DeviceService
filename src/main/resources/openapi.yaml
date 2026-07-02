@@ -1,0 +1,302 @@
+openapi: 3.0.3
+info:
+  title: Device Service API
+  description: API for devices managing and GPS data handling
+  version: 0.0.1-SNAPSHOT
+
+paths:
+  /api/v1/devices:
+    post:
+      tags:
+        - Devices
+      summary: Registers a new device
+      operationId: registerNewDevice
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterDeviceRequest'
+      responses:
+        '201':
+          $ref: '#/components/responses/DeviceResponse'
+        '409':
+          $ref: '#/components/responses/DeviceAlreadyExistsErrorResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    get:
+      tags:
+        - Devices
+      summary: Returns a devices list
+      operationId: getDevices
+      parameters:
+        - name: page
+          in: query
+          description: The page number to retrieve (0-indexed).
+          schema:
+            type: integer
+            format: int32
+            default: 0
+            minimum: 0
+          required: false
+        - name: size
+          in: query
+          description: The number of items per page.
+          schema:
+            type: integer
+            format: int32
+            default: 20
+            minimum: 1
+          required: false
+        - name: sort_field
+          in: query
+          schema:
+            type: string
+            enum:
+              - NAME
+              - TYPE
+              - UNIQUE_IDENTIFIER
+        - name: sort_direction
+          in: query
+          schema:
+            type: string
+            enum:
+              - ASC
+              - DESC
+      responses:
+        '200':
+          $ref: '#/components/responses/DevicesListResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /api/v1/devices/{id}:
+    get:
+      tags:
+        - Devices
+      summary: Returns a specific device
+      operationId: getSpecificDevice
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The device ID
+      responses:
+        '200':
+          $ref: '#/components/responses/DeviceResponse'
+        '404':
+          $ref: '#/components/responses/DeviceNotFoundErrorResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    put:
+      tags:
+        - Devices
+      summary: Modifies an existing device
+      operationId: modifyDevice
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The devices ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModifyDeviceRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/DeviceResponse'
+        '404':
+          $ref: '#/components/responses/DeviceNotFoundErrorResponse'
+        '409':
+          $ref: '#/components/responses/DeviceAlreadyExistsErrorResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+components:
+  schemas:
+    DeviceModel:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "3649ac59-10ef-4ed9-ad69-a095ac834eae"
+        name:
+          type: string
+          maxLength: 128
+          example: 'Courier phone 12'
+        type:
+          type: string
+          enum:
+            - SMARTPHONE
+            - TABLET
+            - SMARTWATCH
+            - VEHICLE_TRACKER
+            - GPS_TRACKER
+            - OTHER
+        uniqueIdentifier:
+          type: string
+          maxLength: 128
+          example: 'phone-courier-12'
+      required:
+        - id
+        - name
+        - type
+        - uniqueIdentifier
+
+    RegisterDeviceRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 128
+          example: 'Courier phone 12'
+        type:
+          type: string
+          enum:
+            - SMARTPHONE
+            - TABLET
+            - SMARTWATCH
+            - VEHICLE_TRACKER
+            - GPS_TRACKER
+            - OTHER
+        uniqueIdentifier:
+          type: string
+          maxLength: 128
+          example: 'phone-courier-12'
+      required:
+        - name
+        - type
+        - uniqueIdentifier
+
+    ModifyDeviceRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 128
+          example: 'Courier phone 12'
+        type:
+          type: string
+          enum:
+            - SMARTPHONE
+            - TABLET
+            - SMARTWATCH
+            - VEHICLE_TRACKER
+            - GPS_TRACKER
+            - OTHER
+        uniqueIdentifier:
+          type: string
+          maxLength: 128
+          example: 'phone-courier-12'
+      required:
+        - name
+        - type
+        - uniqueIdentifier
+
+    ErrorModel:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "BAD_REQUEST"
+        message:
+          type: string
+          example: "Request has wrong field"
+      required:
+        - error
+        - message
+
+    DeviceNotFoundErrorModel:
+      type: object
+      properties:
+        error:
+          type: string
+          enum:
+            - DEVICE_NOT_FOUND
+        message:
+          type: string
+          example: "Device with id 123 not found"
+      required:
+        - error
+        - message
+
+    DeviceAlreadyExistsErrorModel:
+      type: object
+      properties:
+        error:
+          type: string
+          enum:
+            - DEVICE_ALREADY_EXISTS
+        message:
+          type: string
+          example: "Device with identifier 123 already exists"
+      required:
+        - error
+        - message
+
+  responses:
+    DevicesListResponse:
+      description: "Devices list response"
+      headers:
+        X-Page:
+          description: Current page number
+          schema:
+            type: integer
+            format: int32
+            example: 0
+        X-Size:
+          description: Page size
+          schema:
+            type: integer
+            format: int32
+            example: 20
+        X-Total-Elements:
+          description: Total number of devices
+          schema:
+            type: integer
+            format: int64
+            example: 125
+        X-Total-Pages:
+          description: Total number of pages
+          schema:
+            type: integer
+            format: int32
+            example: 7
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/DeviceModel'
+    DeviceResponse:
+      description: "Device response"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/DeviceModel"
+
+    ErrorResponse:
+      description: "Error response"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorModel"
+
+    DeviceNotFoundErrorResponse:
+      description: "Error response"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/DeviceNotFoundErrorModel"
+
+    DeviceAlreadyExistsErrorResponse:
+      description: "Error response"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/DeviceAlreadyExistsErrorModel"
