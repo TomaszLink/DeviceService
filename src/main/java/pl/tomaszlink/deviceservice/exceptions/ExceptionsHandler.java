@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import pl.tomaszlink.deviceservice.model.DeviceAlreadyExistsErrorModel;
+import pl.tomaszlink.deviceservice.model.DeviceLocationNotFoundErrorModel;
 import pl.tomaszlink.deviceservice.model.DeviceNotFoundErrorModel;
 import pl.tomaszlink.deviceservice.model.ErrorModel;
 
@@ -35,6 +36,15 @@ public class ExceptionsHandler {
                 .status(404)
                 .body(new DeviceNotFoundErrorModel()
                         .error(DeviceNotFoundErrorModel.ErrorEnum.DEVICE_NOT_FOUND)
+                        .message(ex.getMessage()));
+    }
+
+    @ExceptionHandler(DeviceLocationNotFoundException.class)
+    public ResponseEntity<DeviceLocationNotFoundErrorModel> handleDeviceLocationNotFoundException(DeviceLocationNotFoundException ex) {
+        return ResponseEntity
+                .status(404)
+                .body(new DeviceLocationNotFoundErrorModel()
+                        .error(DeviceLocationNotFoundErrorModel.ErrorEnum.DEVICE_LOCATION_NOT_FOUND)
                         .message(ex.getMessage()));
     }
 

@@ -1,4 +1,4 @@
-package pl.tomaszlink.deviceservice.domain.device;
+package pl.tomaszlink.deviceservice.domain.device.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import pl.tomaszlink.deviceservice.domain.device.models.DeviceEntity;

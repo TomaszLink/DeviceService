@@ -1,6 +1,18 @@
 version: '3.8'
 
 services:
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: device-service-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
 #  userservice:
 #    image: tomaszlink/userservice:0.0.1-SNAPSHOT
 #    container_name: userservice
@@ -28,4 +40,5 @@ services:
       - ./init:/docker-entrypoint-initdb.d
 
 volumes:
+  rabbitmq_data:
   postgres_data:

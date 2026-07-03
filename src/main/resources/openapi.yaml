@@ -24,6 +24,7 @@ paths:
           $ref: '#/components/responses/DeviceAlreadyExistsErrorResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
+
     get:
       tags:
         - Devices
@@ -90,6 +91,7 @@ paths:
           $ref: '#/components/responses/DeviceNotFoundErrorResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
+
     put:
       tags:
         - Devices
@@ -118,6 +120,93 @@ paths:
           $ref: '#/components/responses/DeviceAlreadyExistsErrorResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
+
+  /api/v1/devices/{id}/locations:
+    post:
+      tags:
+        - Locations
+      summary: Sends a GPS location for a registered device
+      operationId: sendDeviceLocation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The device ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceLocationRequest'
+      responses:
+        '202':
+          description: GPS location accepted for processing
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    get:
+      tags:
+        - Locations
+      summary: Returns a devices list
+      operationId: getDeviceLocations
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The device ID
+        - name: page
+          in: query
+          description: The page number to retrieve (0-indexed).
+          schema:
+            type: integer
+            format: int32
+            default: 0
+            minimum: 0
+          required: false
+        - name: size
+          in: query
+          description: The number of items per page.
+          schema:
+            type: integer
+            format: int32
+            default: 20
+            minimum: 1
+          required: false
+      responses:
+        '200':
+          $ref: '#/components/responses/DeviceLocationsListResponse'
+        '404':
+          $ref: '#/components/responses/DeviceNotFoundErrorResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /api/v1/devices/{id}/locations/latest:
+    get:
+      tags:
+        - Locations
+      summary: Returns the latest GPS location for a registered device
+      operationId: getLatestDeviceLocation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The device ID
+      responses:
+        '200':
+          $ref: '#/components/responses/DeviceLocationResponse'
+        '404':
+          $ref: '#/components/responses/DeviceLocationNotFoundErrorResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
 components:
   schemas:
     DeviceModel:
@@ -200,6 +289,60 @@ components:
         - type
         - uniqueIdentifier
 
+    DeviceLocationRequest:
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: double
+          minimum: -90
+          maximum: 90
+          example: 52.2297
+        longitude:
+          type: number
+          format: double
+          minimum: -180
+          maximum: 180
+          example: 21.0122
+        timestamp:
+          type: string
+          format: date-time
+          example: "2026-07-03T18:30:00Z"
+      required:
+        - latitude
+        - longitude
+        - timestamp
+
+    DeviceLocationModel:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "3649ac59-10ef-4ed9-ad69-a095ac834eae"
+        latitude:
+          type: number
+          format: double
+          example: 52.2297
+        longitude:
+          type: number
+          format: double
+          example: 21.0122
+        timestamp:
+          type: string
+          format: date-time
+          example: "2026-07-03T18:30:00Z"
+        receivedAt:
+          type: string
+          format: date-time
+          example: "2026-07-03T18:30:01Z"
+      required:
+        - deviceId
+        - latitude
+        - longitude
+        - timestamp
+        - receivedAt
+
     ErrorModel:
       type: object
       properties:
@@ -227,6 +370,20 @@ components:
         - error
         - message
 
+    DeviceLocationNotFoundErrorModel:
+      type: object
+      properties:
+        error:
+          type: string
+          enum:
+            - DEVICE_LOCATION_NOT_FOUND
+        message:
+          type: string
+          example: "Device location with device id 123 not found"
+      required:
+        - error
+        - message
+
     DeviceAlreadyExistsErrorModel:
       type: object
       properties:
@@ -242,6 +399,40 @@ components:
         - message
 
   responses:
+    DeviceLocationsListResponse:
+      description: "Devices list response"
+      headers:
+        X-Page:
+          description: Current page number
+          schema:
+            type: integer
+            format: int32
+            example: 0
+        X-Size:
+          description: Page size
+          schema:
+            type: integer
+            format: int32
+            example: 20
+        X-Total-Count:
+          description: Total number of devices
+          schema:
+            type: integer
+            format: int64
+            example: 125
+        X-Total-Pages:
+          description: Total number of pages
+          schema:
+            type: integer
+            format: int32
+            example: 7
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/DeviceLocationModel'
+
     DevicesListResponse:
       description: "Devices list response"
       headers:
@@ -275,12 +466,20 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/DeviceModel'
+
     DeviceResponse:
       description: "Device response"
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/DeviceModel"
+
+    DeviceLocationResponse:
+      description: "Device location response"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/DeviceLocationModel"
 
     ErrorResponse:
       description: "Error response"
@@ -295,6 +494,13 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/DeviceNotFoundErrorModel"
+
+    DeviceLocationNotFoundErrorResponse:
+      description: "Error response"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/DeviceLocationNotFoundErrorModel"
 
     DeviceAlreadyExistsErrorResponse:
       description: "Error response"

@@ -2,6 +2,7 @@ package pl.tomaszlink.deviceservice.domain.device;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -10,23 +11,25 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.tomaszlink.deviceservice.domain.common.ListResult;
 import pl.tomaszlink.deviceservice.domain.device.models.DeviceEntity;
 import pl.tomaszlink.deviceservice.domain.device.models.DeviceResult;
-import pl.tomaszlink.deviceservice.domain.device.models.DevicesListResult;
 import pl.tomaszlink.deviceservice.domain.device.models.RegisterDeviceCommand;
+import pl.tomaszlink.deviceservice.domain.device.repositories.DeviceRepository;
 import pl.tomaszlink.deviceservice.exceptions.DeviceAlreadyExistsException;
 import pl.tomaszlink.deviceservice.exceptions.DeviceNotFoundException;
 
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DeviceService {
     private final DeviceRepository deviceRepository;
 
     @Transactional(readOnly = true)
-    public DevicesListResult getDevices(int page, int size, String sortField, String sortDirection) {
+    public ListResult<DeviceResult> getDevices(int page, int size, String sortField, String sortDirection) {
         Sort sort = Sort.unsorted();
         if (sortField != null && !sortField.isBlank()) {
             Sort.Direction direction = Sort.Direction.DESC.toString().equalsIgnoreCase(sortDirection) ? Sort.Direction.DESC : Sort.Direction.ASC;
@@ -40,7 +43,7 @@ public class DeviceService {
                 .map(DeviceMapper::toResult)
                 .toList();
 
-        return new DevicesListResult(
+        return new ListResult<>(
                 list,
                 page,
                 size,
@@ -66,17 +69,22 @@ public class DeviceService {
         deviceEntity.setType(registerDeviceCommand.type());
         deviceEntity.setUniqueIdentifier(registerDeviceCommand.uniqueIdentifier());
 
-        return DeviceMapper.toResult(this.saveDevice(deviceEntity));
+        deviceEntity = this.saveDevice(deviceEntity);
+
+        log.info("Device {} has been modified", deviceEntity.getId());
+
+        return DeviceMapper.toResult(deviceEntity);
     }
 
     @Transactional
     public DeviceResult registerNewDevice(RegisterDeviceCommand registerDeviceCommand) {
         this.checkDeviceUniqueIdentifierAvailability(registerDeviceCommand.uniqueIdentifier());
         DeviceEntity deviceEntity = DeviceEntity.from(registerDeviceCommand);
+        deviceEntity = this.saveDevice(deviceEntity);
 
-        return DeviceMapper.toResult(
-                this.saveDevice(deviceEntity)
-        );
+        log.info("Device {} has been registered with id {}", deviceEntity.getUniqueIdentifier(), deviceEntity.getId());
+
+        return DeviceMapper.toResult(deviceEntity);
     }
 
     private void checkDeviceUniqueIdentifierAvailability(@NotNull String uniqueIdentifier) {

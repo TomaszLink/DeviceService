@@ -1,0 +1,12 @@
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin
+
+app:
+  rabbitmq:
+    exchange: device.locations.exchange
+    queue: device.locations.queue
+    routing-key: device.location.received
