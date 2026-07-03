@@ -24,6 +24,7 @@ paths:
           $ref: '#/components/responses/DeviceAlreadyExistsErrorResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
+
     get:
       tags:
         - Devices
@@ -90,6 +91,7 @@ paths:
           $ref: '#/components/responses/DeviceNotFoundErrorResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
+
     put:
       tags:
         - Devices
@@ -118,6 +120,35 @@ paths:
           $ref: '#/components/responses/DeviceAlreadyExistsErrorResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
+
+  /api/v1/devices/{id}/locations:
+    post:
+      tags:
+        - Device Locations
+      summary: Sends a GPS location for a registered device
+      operationId: sendDeviceLocation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The device ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendDeviceLocationRequest'
+      responses:
+        '202':
+          description: GPS location accepted for processing
+        '404':
+          $ref: '#/components/responses/DeviceNotFoundErrorResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
 components:
   schemas:
     DeviceModel:
@@ -200,6 +231,30 @@ components:
         - type
         - uniqueIdentifier
 
+    SendDeviceLocationRequest:
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: double
+          minimum: -90
+          maximum: 90
+          example: 52.2297
+        longitude:
+          type: number
+          format: double
+          minimum: -180
+          maximum: 180
+          example: 21.0122
+        timestamp:
+          type: string
+          format: date-time
+          example: "2026-07-03T18:30:00Z"
+      required:
+        - latitude
+        - longitude
+        - timestamp
+
     ErrorModel:
       type: object
       properties:
@@ -275,6 +330,7 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/DeviceModel'
+
     DeviceResponse:
       description: "Device response"
       content:
