@@ -20,14 +20,22 @@ openApiGenerate {
     library = "spring-boot"
     inputSpec = "$projectDir/src/main/resources/openapi.yaml"
     outputDir = "$buildDir/generated"
-    apiPackage = "pl.tomaszlink.userservice.api"
-    modelPackage = "pl.tomaszlink.userservice.model"
+    apiPackage = "pl.tomaszlink.deviceservice.api"
+    modelPackage = "pl.tomaszlink.deviceservice.model"
     configOptions = [
             useSpringBoot3       : "true",
             interfaceOnly        : "true",
             skipDefaultInterface : "true",
             "useTags"             : "true"
     ]
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir "$buildDir/generated/src/main/java"
+        }
+    }
 }
 
 repositories {
@@ -38,7 +46,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2'
+    implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
     runtimeOnly 'org.postgresql:postgresql'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

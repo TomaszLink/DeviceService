@@ -12,6 +12,7 @@ paths:
       summary: Registers a new device
       operationId: registerNewDevice
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -103,6 +104,7 @@ paths:
             format: uuid
           description: The devices ID
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -255,7 +257,7 @@ components:
             type: integer
             format: int32
             example: 20
-        X-Total-Elements:
+        X-Total-Count:
           description: Total number of devices
           schema:
             type: integer
