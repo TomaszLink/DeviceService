@@ -48,6 +48,7 @@ paths:
             format: int32
             default: 20
             minimum: 1
+            maximum: 500
           required: false
         - name: sort_field
           in: query
@@ -176,6 +177,7 @@ paths:
             format: int32
             default: 20
             minimum: 1
+            maximum: 500
           required: false
       responses:
         '200':
