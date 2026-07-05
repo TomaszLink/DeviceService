@@ -122,20 +122,12 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
 
-  /api/v1/devices/{id}/locations:
+  /api/v1/devices/locations:
     post:
       tags:
         - Locations
       summary: Sends a GPS location for a registered device
       operationId: sendDeviceLocation
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-          description: The device ID
       requestBody:
         required: true
         content:
@@ -145,8 +137,12 @@ paths:
       responses:
         '202':
           description: GPS location accepted for processing
+        '404':
+          $ref: '#/components/responses/DeviceNotFoundErrorResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
+
+  /api/v1/devices/{id}/locations:
     get:
       tags:
         - Locations

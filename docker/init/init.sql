@@ -58,3 +58,21 @@ CREATE TABLE device_last_locations (
     CONSTRAINT chk_device_last_locations_longitude
        CHECK (longitude >= -180 AND longitude <= 180)
 );
+
+INSERT INTO devices (
+    id,
+    name,
+    type,
+    unique_identifier,
+    version,
+    created_at,
+    updated_at
+) VALUES (
+             '11701533-b50d-42c4-98f4-fcfee9e0b32b',
+             'Test device',
+             'GPS_TRACKER',
+             'test-device-001',
+             0,
+             NOW(),
+             NOW()
+         );

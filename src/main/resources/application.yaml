@@ -5,3 +5,5 @@ spring:
     active:
       - "postgresql"
       - "rabbitmq"
+jwt:
+  public-key: "certs/public_key.pem"

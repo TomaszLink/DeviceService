@@ -14,6 +14,7 @@ import pl.tomaszlink.deviceservice.domain.device.models.RegisterDeviceCommand;
 import pl.tomaszlink.deviceservice.model.DeviceModel;
 import pl.tomaszlink.deviceservice.model.ModifyDeviceRequest;
 import pl.tomaszlink.deviceservice.model.RegisterDeviceRequest;
+import pl.tomaszlink.deviceservice.security.PreAuthorizeHasPrivilege;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +26,7 @@ public class DeviceController implements DevicesApi {
     private final DeviceService deviceService;
 
     @Override
+    @PreAuthorizeHasPrivilege("DEVICE_READ")
     public ResponseEntity<List<DeviceModel>> getDevices(Integer page, Integer size, String sortField, String sortDirection) {
         ListResult<DeviceResult> devicesListResult = this.deviceService.getDevices(page, size, sortField, sortDirection);
 
@@ -32,12 +34,14 @@ public class DeviceController implements DevicesApi {
     }
 
     @Override
+    @PreAuthorizeHasPrivilege("DEVICE_READ")
     public ResponseEntity<DeviceModel> getSpecificDevice(UUID id) {
         DeviceModel deviceModel = DeviceMapper.toDeviceModel(this.deviceService.getSpecificDevice(id));
         return ResponseEntity.ok(deviceModel);
     }
 
     @Override
+    @PreAuthorizeHasPrivilege("DEVICE_UPDATE")
     public ResponseEntity<DeviceModel> modifyDevice(UUID id, ModifyDeviceRequest modifyDeviceRequest) {
         ModifyDeviceCommand command = DeviceMapper.toCommand(id, modifyDeviceRequest);
         DeviceModel deviceModel = DeviceMapper.toDeviceModel(this.deviceService.modifyDevice(command));
@@ -45,6 +49,7 @@ public class DeviceController implements DevicesApi {
     }
 
     @Override
+    @PreAuthorizeHasPrivilege("DEVICE_CREATE")
     public ResponseEntity<DeviceModel> registerNewDevice(RegisterDeviceRequest registerDeviceRequest) {
         RegisterDeviceCommand command = DeviceMapper.toCommand(registerDeviceRequest);
         DeviceModel deviceModel = DeviceMapper.toDeviceModel(
