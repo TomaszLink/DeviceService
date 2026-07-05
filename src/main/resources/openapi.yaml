@@ -149,7 +149,7 @@ paths:
     get:
       tags:
         - Locations
-      summary: Returns a devices list
+      summary: Returns a device locations list
       operationId: getDeviceLocations
       parameters:
         - name: id
