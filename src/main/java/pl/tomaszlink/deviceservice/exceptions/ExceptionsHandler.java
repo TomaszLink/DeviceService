@@ -5,8 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import pl.tomaszlink.deviceservice.model.DeviceAlreadyExistsErrorModel;
 import pl.tomaszlink.deviceservice.model.DeviceLocationNotFoundErrorModel;
 import pl.tomaszlink.deviceservice.model.DeviceNotFoundErrorModel;
@@ -76,6 +79,39 @@ public class ExceptionsHandler {
         return ResponseEntity
                 .status(400)
                 .body(new ErrorModel().error(VALIDATION_ERROR).message(message));
+    }
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ErrorModel> handleHandlerMethodValidationException(HandlerMethodValidationException ex) {
+        String message = ex.getParameterValidationResults().stream()
+                .flatMap(result -> result.getResolvableErrors().stream()
+                        .map(error -> result.getMethodParameter().getParameterName() + ": " + error.getDefaultMessage()))
+                .collect(Collectors.joining(", "));
+        return ResponseEntity
+                .status(400)
+                .body(new ErrorModel().error(VALIDATION_ERROR).message(message));
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorModel> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+        String message = ex.getName() + ": invalid value '" + ex.getValue() + "'";
+        return ResponseEntity
+                .status(400)
+                .body(new ErrorModel().error(BAD_REQUEST).message(message));
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorModel> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
+        return ResponseEntity
+                .status(400)
+                .body(new ErrorModel().error(BAD_REQUEST).message(ex.getParameterName() + " is required"));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorModel> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        return ResponseEntity
+                .status(400)
+                .body(new ErrorModel().error(BAD_REQUEST).message("Malformed request body"));
     }
 
     @ExceptionHandler(Exception.class)
