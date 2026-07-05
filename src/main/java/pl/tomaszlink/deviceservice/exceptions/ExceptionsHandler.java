@@ -114,6 +114,15 @@ public class ExceptionsHandler {
                 .body(new ErrorModel().error(BAD_REQUEST).message("Malformed request body"));
     }
 
+    @ExceptionHandler(ConcurrentModificationException.class)
+    public ResponseEntity<ErrorModel> handleConcurrentModificationException(ConcurrentModificationException e) {
+        return ResponseEntity
+                .status(409)
+                .body(new ErrorModel()
+                        .error("CONCURRENT_MODIFICATION")
+                        .message("Let's try again."));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorModel> handleGeneralException(Exception ex) {
         log.error("Unhandled exception", ex);

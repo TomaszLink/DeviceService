@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,8 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.tomaszlink.deviceservice.domain.common.ListResult;
 import pl.tomaszlink.deviceservice.domain.device.models.DeviceEntity;
 import pl.tomaszlink.deviceservice.domain.device.models.DeviceResult;
+import pl.tomaszlink.deviceservice.domain.device.models.ModifyDeviceCommand;
 import pl.tomaszlink.deviceservice.domain.device.models.RegisterDeviceCommand;
 import pl.tomaszlink.deviceservice.domain.device.repositories.DeviceRepository;
+import pl.tomaszlink.deviceservice.exceptions.ConcurrentModificationException;
 import pl.tomaszlink.deviceservice.exceptions.DeviceAlreadyExistsException;
 import pl.tomaszlink.deviceservice.exceptions.DeviceNotFoundException;
 
@@ -60,14 +63,14 @@ public class DeviceService {
     }
 
     @Transactional
-    public DeviceResult modifyDevice(@NotNull UUID id, @NotNull RegisterDeviceCommand registerDeviceCommand) {
-        DeviceEntity deviceEntity = this.findDeviceById(id);
-        if(!registerDeviceCommand.uniqueIdentifier().equals(deviceEntity.getUniqueIdentifier())) {
-            this.checkDeviceUniqueIdentifierAvailability(registerDeviceCommand.uniqueIdentifier());
+    public DeviceResult modifyDevice(@NotNull ModifyDeviceCommand modifyDeviceCommand) {
+        DeviceEntity deviceEntity = this.findDeviceById(modifyDeviceCommand.id());
+        if(!modifyDeviceCommand.uniqueIdentifier().equals(deviceEntity.getUniqueIdentifier())) {
+            this.checkDeviceUniqueIdentifierAvailability(modifyDeviceCommand.uniqueIdentifier());
         }
-        deviceEntity.setName(registerDeviceCommand.name());
-        deviceEntity.setType(registerDeviceCommand.type());
-        deviceEntity.setUniqueIdentifier(registerDeviceCommand.uniqueIdentifier());
+        deviceEntity.setName(modifyDeviceCommand.name());
+        deviceEntity.setType(modifyDeviceCommand.type());
+        deviceEntity.setUniqueIdentifier(modifyDeviceCommand.uniqueIdentifier());
 
         deviceEntity = this.saveDevice(deviceEntity);
 
@@ -106,6 +109,9 @@ public class DeviceService {
                 throw new DeviceAlreadyExistsException(deviceEntity.getUniqueIdentifier());
             }
             throw ex;
+        }
+        catch (OptimisticLockingFailureException e) {
+            throw new ConcurrentModificationException("User data was modified by another transaction.");
         }
     }
 }

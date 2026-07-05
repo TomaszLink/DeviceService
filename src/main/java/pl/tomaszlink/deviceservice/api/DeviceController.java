@@ -9,6 +9,7 @@ import pl.tomaszlink.deviceservice.domain.common.ResponseEntityHelper;
 import pl.tomaszlink.deviceservice.domain.device.DeviceMapper;
 import pl.tomaszlink.deviceservice.domain.device.DeviceService;
 import pl.tomaszlink.deviceservice.domain.device.models.DeviceResult;
+import pl.tomaszlink.deviceservice.domain.device.models.ModifyDeviceCommand;
 import pl.tomaszlink.deviceservice.domain.device.models.RegisterDeviceCommand;
 import pl.tomaszlink.deviceservice.model.DeviceModel;
 import pl.tomaszlink.deviceservice.model.ModifyDeviceRequest;
@@ -38,8 +39,8 @@ public class DeviceController implements DevicesApi {
 
     @Override
     public ResponseEntity<DeviceModel> modifyDevice(UUID id, ModifyDeviceRequest modifyDeviceRequest) {
-        RegisterDeviceCommand command = DeviceMapper.toCommand(modifyDeviceRequest);
-        DeviceModel deviceModel = DeviceMapper.toDeviceModel(this.deviceService.modifyDevice(id, command));
+        ModifyDeviceCommand command = DeviceMapper.toCommand(id, modifyDeviceRequest);
+        DeviceModel deviceModel = DeviceMapper.toDeviceModel(this.deviceService.modifyDevice(command));
         return ResponseEntity.ok(deviceModel);
     }
 

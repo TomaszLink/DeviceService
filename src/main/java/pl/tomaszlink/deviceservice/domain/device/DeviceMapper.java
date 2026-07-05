@@ -1,13 +1,12 @@
 package pl.tomaszlink.deviceservice.domain.device;
 
 import jakarta.validation.constraints.NotNull;
-import pl.tomaszlink.deviceservice.domain.device.models.DeviceEntity;
-import pl.tomaszlink.deviceservice.domain.device.models.DeviceResult;
-import pl.tomaszlink.deviceservice.domain.device.models.DeviceType;
-import pl.tomaszlink.deviceservice.domain.device.models.RegisterDeviceCommand;
+import pl.tomaszlink.deviceservice.domain.device.models.*;
 import pl.tomaszlink.deviceservice.model.DeviceModel;
 import pl.tomaszlink.deviceservice.model.ModifyDeviceRequest;
 import pl.tomaszlink.deviceservice.model.RegisterDeviceRequest;
+
+import java.util.UUID;
 
 public class DeviceMapper {
     private DeviceMapper() {}
@@ -20,8 +19,9 @@ public class DeviceMapper {
         );
     }
 
-    public static RegisterDeviceCommand toCommand(@NotNull ModifyDeviceRequest request) {
-        return new RegisterDeviceCommand(
+    public static ModifyDeviceCommand toCommand(@NotNull UUID id, @NotNull ModifyDeviceRequest request) {
+        return new ModifyDeviceCommand(
+                id,
                 request.getName(),
                 DeviceType.valueOf(request.getType().name()),
                 request.getUniqueIdentifier()
