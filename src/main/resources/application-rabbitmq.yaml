@@ -10,3 +10,6 @@ app:
     exchange: device.locations.exchange
     queue: device.locations.queue
     routing-key: device.location.received
+    dlx: device.locations.dlx
+    dlq: device.locations.dlq
+    dlq-routing-key: device.location.received.dlq
