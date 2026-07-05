@@ -48,6 +48,16 @@ public class ExceptionsHandler {
                         .message(ex.getMessage()));
     }
 
+    @ExceptionHandler(DeviceLocationPublishException.class)
+    public ResponseEntity<ErrorModel> handleDeviceLocationPublishException(DeviceLocationPublishException ex) {
+        log.error("Device location event could not be published", ex);
+        return ResponseEntity
+                .status(503)
+                .body(new ErrorModel()
+                        .error("SERVICE_UNAVAILABLE")
+                        .message("Location could not be accepted for processing, please retry"));
+    }
+
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorModel> handleConstraintViolationException(ConstraintViolationException ex) {
         String message = ex.getConstraintViolations().stream()
