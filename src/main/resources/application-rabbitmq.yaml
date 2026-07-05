@@ -8,6 +8,11 @@ spring:
     publisher-returns: true
     template:
       mandatory: true
+    listener:
+      simple:
+        concurrency: 5
+        max-concurrency: 20
+        prefetch: 50
 
 app:
   rabbitmq:
