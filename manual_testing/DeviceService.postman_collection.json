@@ -1,0 +1,258 @@
+{
+  "info": {
+    "_postman_id": "06f13739-9ed6-4ae7-8833-94874b903431",
+    "name": "DeviceService",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "14741750"
+  },
+  "item": [
+    {
+      "name": "Register",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Courier phone 13\",\n  \"type\": \"SMARTPHONE\",\n  \"uniqueIdentifier\": \"phone-courier-13\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "localhost:8080/api/v1/devices",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "devices"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Modify",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Courier phone 13\",\n  \"type\": \"SMARTPHONE\",\n  \"uniqueIdentifier\": \"phone-courier-13\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "localhost:8080/api/v1/devices/8563a266-ba9a-44e9-bc23-1c121e69b351",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "devices",
+            "8563a266-ba9a-44e9-bc23-1c121e69b351"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Devices list",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "localhost:8080/api/v1/devices?page=0&size=500&sort_field=NAME&sort_direction=ASC",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "devices"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "0"
+            },
+            {
+              "key": "size",
+              "value": "500"
+            },
+            {
+              "key": "sort_field",
+              "value": "NAME"
+            },
+            {
+              "key": "sort_direction",
+              "value": "ASC"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Specific device",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "localhost:8080/api/v1/devices",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "devices"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Send location",
+      "request": {
+        "auth": {
+          "type": "oauth2",
+          "oauth2": [
+            {
+              "key": "addTokenTo",
+              "value": "header",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"latitude\": 52.2298,\n  \"longitude\": 21.01223,\n  \"timestamp\": \"2026-07-03T19:45:00+01:00\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "localhost:8080/api/v1/devices/locations",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "devices",
+            "locations"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Locations list",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "localhost:8080/api/v1/devices/11701533-b50d-42c4-98f4-fcfee9e0b32b/locations",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "devices",
+            "11701533-b50d-42c4-98f4-fcfee9e0b32b",
+            "locations"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Last location",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"latitude\": 52.2297,\n  \"longitude\": 21.01223,\n  \"timestamp\": \"2026-07-03T18:30:00Z\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "localhost:8080/api/v1/devices/11701533-b50d-42c4-98f4-fcfee9e0b32b/locations/latest",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "devices",
+            "11701533-b50d-42c4-98f4-fcfee9e0b32b",
+            "locations",
+            "latest"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "addTokenTo",
+        "value": "header",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}
