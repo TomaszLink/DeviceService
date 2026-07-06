@@ -2,9 +2,9 @@ package pl.tomaszlink.deviceservice.domain.device;
 
 import jakarta.validation.constraints.NotNull;
 import pl.tomaszlink.deviceservice.domain.device.models.*;
-import pl.tomaszlink.deviceservice.model.DeviceModel;
-import pl.tomaszlink.deviceservice.model.ModifyDeviceRequest;
-import pl.tomaszlink.deviceservice.model.RegisterDeviceRequest;
+import pl.tomaszlink.deviceservice.models.DeviceModel;
+import pl.tomaszlink.deviceservice.models.ModifyDeviceRequest;
+import pl.tomaszlink.deviceservice.models.RegisterDeviceRequest;
 
 import java.util.UUID;
 

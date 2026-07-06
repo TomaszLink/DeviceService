@@ -2,8 +2,8 @@ package pl.tomaszlink.deviceservice.domain.location;
 
 import jakarta.validation.constraints.NotNull;
 import pl.tomaszlink.deviceservice.domain.location.models.*;
-import pl.tomaszlink.deviceservice.model.DeviceLocationModel;
-import pl.tomaszlink.deviceservice.model.DeviceLocationRequest;
+import pl.tomaszlink.deviceservice.models.DeviceLocationModel;
+import pl.tomaszlink.deviceservice.models.DeviceLocationRequest;
 
 import java.math.BigDecimal;
 import java.time.Instant;

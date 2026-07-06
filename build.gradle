@@ -1,8 +1,10 @@
 plugins {
     id 'java'
+    id 'groovy'
     id 'org.springframework.boot' version '4.1.0'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'org.openapi.generator' version '7.6.0'
+    id 'jacoco'
 }
 
 group = 'pl.tomaszlink'
@@ -20,8 +22,8 @@ openApiGenerate {
     library = "spring-boot"
     inputSpec = "$projectDir/src/main/resources/openapi.yaml"
     outputDir = "$buildDir/generated"
-    apiPackage = "pl.tomaszlink.deviceservice.api"
-    modelPackage = "pl.tomaszlink.deviceservice.model"
+    apiPackage = "pl.tomaszlink.deviceservice.apis"
+    modelPackage = "pl.tomaszlink.deviceservice.models"
     configOptions = [
             useSpringBoot3       : "true",
             interfaceOnly        : "true",
@@ -59,6 +61,8 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testImplementation platform('org.spockframework:spock-bom:2.4-groovy-5.0')
+    testImplementation 'org.spockframework:spock-core'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
@@ -68,4 +72,21 @@ tasks.named('test') {
 
 tasks.named('compileJava') {
     dependsOn 'openApiGenerate'
+}
+
+jacocoTestReport {
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    "pl/tomaszlink/deviceservice/apis/**",
+                    "pl/tomaszlink/deviceservice/models/**",
+                    "pl/tomaszlink/deviceservice/config/**",
+                    "pl/tomaszlink/deviceservice/DeviceServiceApplication.class",
+                    "pl/tomaszlink/deviceservice/security/SecurityConfiguration.class"
+            ])
+        }))
+    }
+    reports {
+        xml.required = true
+    }
 }

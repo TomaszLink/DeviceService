@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import pl.tomaszlink.deviceservice.model.DeviceAlreadyExistsErrorModel;
-import pl.tomaszlink.deviceservice.model.DeviceLocationNotFoundErrorModel;
-import pl.tomaszlink.deviceservice.model.DeviceNotFoundErrorModel;
-import pl.tomaszlink.deviceservice.model.ErrorModel;
+import pl.tomaszlink.deviceservice.models.DeviceAlreadyExistsErrorModel;
+import pl.tomaszlink.deviceservice.models.DeviceLocationNotFoundErrorModel;
+import pl.tomaszlink.deviceservice.models.DeviceNotFoundErrorModel;
+import pl.tomaszlink.deviceservice.models.ErrorModel;
 
 import java.util.stream.Collectors;
 
