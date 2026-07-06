@@ -335,7 +335,7 @@ components:
           format: date-time
           example: "2026-07-03T18:30:01Z"
       required:
-        - deviceId
+        - id
         - latitude
         - longitude
         - timestamp
