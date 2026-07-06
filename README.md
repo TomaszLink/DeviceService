@@ -94,6 +94,8 @@ W katalogu manual_testing umieszczono pliki pomocnicze ułatwiające ręczne tes
 
 Katalog zawiera gotowe tokeny JWT podpisane właściwym kluczem prywatnym wykorzystywanym przez aplikację. Tokeny zostały przygotowane wyłącznie na potrzeby testów manualnych i nie posiadają terminu ważności. W środowisku produkcyjnym tokeny JWT powinny zawsze posiadać określony czas ważności, na przykład za pomocą claimu exp.
 
+Podczas testowania endpointów zabezpieczonych należy przekazać token JWT w nagłówku Authorization jako token typu Bearer.
+
 Dostępne tokeny testowe:
 
 * admin - token posiadający wszystkie uprawnienia administracyjne z wyjątkiem DEVICE_LOCATION_SEND. Reprezentuje użytkownika administracyjnego, który może zarządzać urządzeniami oraz odczytywać dane lokalizacyjne, ale nie może wysyłać lokalizacji jako urządzenie.
