@@ -30,7 +30,7 @@ Aplikacja służy do rejestracji urządzeń mobilnych oraz obsługi przesyłanyc
 
 Część odpowiedzialna za zarządzanie urządzeniami została zaimplementowana w klasycznym podejściu CRUD z wykorzystaniem Spring Boot, JPA oraz Hibernate. Umożliwia ona rejestrację nowych urządzeń, pobieranie listy urządzeń, pobieranie szczegółów pojedynczego urządzenia oraz modyfikację danych urządzenia.
 
-W celu zapewnienia wysokiej wydajności przy dużej liczbie requestów zawierających dane GPS zastosowano architekturę asynchroniczną. Po otrzymaniu żądania z lokalizacją system najpierw waliduje, czy urządzenie istnieje, a następnie publikuje komunikat do RabbitMQ. Dzięki temu zapis danych lokalizacyjnych może być obsługiwany asynchronicznie, co ogranicza ryzyko przeciążenia bazy danych w przypadku jednoczesnego wysyłania lokalizacji przez dużą liczbę urządzeń.
+W celu zapewnienia wysokiej wydajności przy dużej liczbie żądań zawierających dane GPS zastosowano architekturę asynchroniczną. Po otrzymaniu żądania z lokalizacją system najpierw waliduje, czy urządzenie istnieje, a następnie publikuje komunikat do RabbitMQ. Dzięki temu zapis danych lokalizacyjnych może być obsługiwany asynchronicznie, co ogranicza ryzyko przeciążenia bazy danych w przypadku jednoczesnego wysyłania lokalizacji przez dużą liczbę urządzeń.
 
 Takie podejście pozwala oddzielić przyjęcie żądania HTTP od faktycznego zapisu danych w bazie. Endpoint przyjmujący lokalizację może szybko zwrócić odpowiedź 202 Accepted, a dalsze przetwarzanie odbywa się po stronie konsumenta wiadomości.
 
@@ -66,7 +66,7 @@ W przypadku wysyłania lokalizacji urządzenia identyfikator urządzenia nie jes
 
 Z poziomu katalogu projektu należy wykonać następujące polecenia:
 
-gradle clean build
+./gradlew clean build
 docker compose up -d --build
 
 Pierwsze polecenie buduje aplikację i tworzy plik .jar. Drugie polecenie uruchamia środowisko aplikacji przy użyciu Docker Compose.
